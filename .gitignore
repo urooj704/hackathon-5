@@ -1,0 +1,42 @@
+# Claude Code
+.claude/
+
+# Environment
+.env
+*.env.local
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# DB / secrets
+*.db
+gmail_token.json
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Alembic
+*.pyc
+
+# Docker
+*.log

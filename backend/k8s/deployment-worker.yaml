@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fte-message-processor
+  namespace: customer-success-fte
+  labels:
+    app: customer-success-fte
+    component: message-processor
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: customer-success-fte
+      component: message-processor
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: customer-success-fte
+        component: message-processor
+    spec:
+      terminationGracePeriodSeconds: 60    # Longer — allow in-flight message processing
+      containers:
+        - name: message-processor
+          image: your-registry/customer-success-fte:latest
+          imagePullPolicy: Always
+          command:
+            - python
+            - workers/message_processor.py
+          envFrom:
+            - configMapRef:
+                name: fte-config
+            - secretRef:
+                name: fte-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"         # Higher limit for AI inference
+              cpu: "1000m"
+          livenessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import sys; sys.exit(0)"  # Basic health check
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 3
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: customer-success-fte
+                    component: message-processor
+                topologyKey: kubernetes.io/hostname

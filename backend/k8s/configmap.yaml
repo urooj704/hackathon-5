@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fte-config
+  namespace: customer-success-fte
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+
+  # Kafka
+  KAFKA_BOOTSTRAP_SERVERS: "kafka.kafka.svc.cluster.local:9092"
+
+  # PostgreSQL
+  POSTGRES_HOST: "postgres.customer-success-fte.svc.cluster.local"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "fte_db"
+  POSTGRES_USER: "fte_user"
+
+  # Redis
+  REDIS_URL: "redis://redis.customer-success-fte.svc.cluster.local:6379/0"
+
+  # Channel toggles
+  GMAIL_ENABLED: "true"
+  WHATSAPP_ENABLED: "true"
+  WEBFORM_ENABLED: "true"
+
+  # Response limits per channel
+  MAX_EMAIL_LENGTH: "2000"
+  MAX_WHATSAPP_LENGTH: "1600"
+  MAX_WEBFORM_LENGTH: "1000"
+
+  # Agent settings
+  OPENAI_MODEL: "gpt-4o"
+  MAX_AGENT_TURNS: "6"
+  KNOWLEDGE_SIMILARITY_THRESHOLD: "0.70"
+
+  # WhatsApp (Meta Cloud API)
+  WHATSAPP_API_URL: "https://graph.facebook.com/v18.0"
