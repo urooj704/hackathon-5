@@ -1,6 +1,14 @@
 {
-  "buildCommand": "cd frontend/web-form && npm install && npm run build",
-  "outputDirectory": "frontend/web-form/.next",
-  "installCommand": "cd frontend/web-form && npm install",
-  "framework": "nextjs"
+  "builds": [
+    {
+      "src": "frontend/web-form/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "frontend/web-form/$1"
+    }
+  ]
 }
