@@ -145,18 +145,43 @@ Access the application at: **http://localhost:3001**
 
 ## 🌐 Deployment
 
-### Hugging Face Spaces (Backend)
-The backend is deployed using the mock backend for instant setup:
+### Backend Options
+
+#### Option 1: Local Development (Recommended for Testing)
+```bash
+# Run mock backend (no database required)
+python mock_backend.py
+
+# Or run full backend (requires PostgreSQL + Redis)
+cd backend
+pip install -r requirements.txt
+uvicorn src.app:app --reload --port 8000
+```
+
+#### Option 2: Deploy to Hugging Face Spaces
+The Hugging Face space is configured but may need manual deployment:
 - **URL**: https://huggingface.co/spaces/Ujjee/hackathon-5
-- **Status**: ✅ Live
-- **Type**: Docker-based deployment
+- **Status**: Requires manual deployment trigger
+- **Note**: Go to the space settings and click "Factory Reset" to redeploy
+
+#### Option 3: Deploy to Railway/Render/Other Platforms
+The backend can be deployed to any platform that supports Docker or Python:
+```bash
+# Deploy using the Dockerfile
+docker build -t flowforge-backend .
+docker run -p 8000:8000 flowforge-backend
+```
 
 ### Vercel (Frontend)
 Frontend deployment configuration included:
 ```bash
 # Deploy to Vercel
+# Set Root Directory to: frontend/web-form
+# Set Environment Variable: NEXT_PUBLIC_API_URL to your backend URL
 vercel deploy
 ```
+
+**Important**: For Vercel deployment, you must set the `NEXT_PUBLIC_API_URL` environment variable to your backend URL (e.g., `http://localhost:8000` for local, or your deployed backend URL).
 
 ## 📡 API Documentation
 
