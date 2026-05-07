@@ -23,12 +23,21 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    JSON,
     String,
     Text,
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+
+# Use JSON on SQLite (tests) and JSONB on Postgres (prod).
+JSONType = JSON().with_variant(JSONB, "postgresql")
+
+# Use INTEGER primary keys on SQLite (autoincrement works reliably),
+# and BIGINT on Postgres.
+IdType = Integer().with_variant(BigInteger, "postgresql")
 
 
 # ─── Enums ────────────────────────────────────────────────────────────────────
@@ -96,7 +105,7 @@ class Customer(Base):
     """
     __tablename__ = "customers"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(IdType, primary_key=True, autoincrement=True)
 
     # Identity fields — at least one must be present
     email: Mapped[Optional[str]] = mapped_column(String(255), unique=True, nullable=True, index=True)
@@ -146,9 +155,9 @@ class Ticket(Base):
     """
     __tablename__ = "tickets"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(IdType, primary_key=True, autoincrement=True)
     customer_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("customers.id", ondelete="CASCADE"), index=True
+        IdType, ForeignKey("customers.id", ondelete="CASCADE"), index=True
     )
 
     # Display ID (human-readable, e.g., TKT-00123)
@@ -219,9 +228,9 @@ class Message(Base):
     """
     __tablename__ = "messages"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(IdType, primary_key=True, autoincrement=True)
     ticket_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("tickets.id", ondelete="CASCADE"), index=True
+        IdType, ForeignKey("tickets.id", ondelete="CASCADE"), index=True
     )
 
     # Direction
@@ -241,7 +250,7 @@ class Message(Base):
 
     # Attachment metadata (we don't store binary — just metadata)
     has_attachments: Mapped[bool] = mapped_column(Boolean, default=False)
-    attachment_metadata: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    attachment_metadata: Mapped[Optional[dict]] = mapped_column(JSONType, nullable=True)
     # [{"filename": "screenshot.png", "mime_type": "image/png", "size_bytes": 204800}]
 
     # AI analysis of this specific message
@@ -279,9 +288,9 @@ class Escalation(Base):
     """
     __tablename__ = "escalations"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(IdType, primary_key=True, autoincrement=True)
     ticket_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("tickets.id", ondelete="CASCADE"), index=True
+        IdType, ForeignKey("tickets.id", ondelete="CASCADE"), index=True
     )
 
     tier: Mapped[EscalationTierEnum] = mapped_column(
@@ -290,7 +299,7 @@ class Escalation(Base):
     reason: Mapped[str] = mapped_column(String(500))
     # Human-readable reason, e.g. "Customer threatened chargeback (TKT-010)"
 
-    trigger_keywords: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True)
+    trigger_keywords: Mapped[Optional[list]] = mapped_column(JSONType, nullable=True)
     # ["chargeback", "dispute", "my bank"] — keywords that fired the rule
 
     routed_to: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -341,7 +350,7 @@ class DocChunk(Base):
     )
 
     # Metadata for filtering
-    tags: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True)
+    tags: Mapped[Optional[list]] = mapped_column(JSONType, nullable=True)
     # e.g., ["billing", "gmail", "error_handling"]
 
     created_at: Mapped[datetime] = mapped_column(

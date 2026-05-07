@@ -356,8 +356,8 @@ class UnifiedMessageProcessor:
         customer_message = message.get("body") or message.get("content", "")
 
         # Try OpenAI Agents SDK
-        openai_key = os.getenv("OPENAI_API_KEY")
-        if openai_key:
+        openai_key = (os.getenv("OPENAI_API_KEY") or "").strip()
+        if openai_key and "placeholder" not in openai_key.lower():
             try:
                 return await self._run_openai_agent(
                     customer_message, customer_id, ticket_id, channel, history

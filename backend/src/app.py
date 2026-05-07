@@ -35,16 +35,25 @@ async def lifespan(app: FastAPI):
     log.info("app_starting", env=settings.app_env)
 
     # Initialize database tables
-    await init_db()
-    log.info("db_initialized")
+    db_ready = False
+    try:
+        await init_db()
+        db_ready = True
+        log.info("db_initialized")
+    except Exception as exc:
+        # Allow the API to boot for local dev/tests even if Postgres isn't running.
+        log.warning("db_init_failed_skipping_startup_db_tasks", error=str(exc))
 
     # Load knowledge base (no-op if already loaded)
-    async with get_db() as db:
-        chunks = await load_knowledge_base(db)
-        if chunks:
-            log.info("knowledge_base_loaded", chunks=chunks)
-        else:
-            log.info("knowledge_base_already_loaded")
+    if db_ready:
+        async with get_db() as db:
+            chunks = await load_knowledge_base(db)
+            if chunks:
+                log.info("knowledge_base_loaded", chunks=chunks)
+            else:
+                log.info("knowledge_base_already_loaded")
+    else:
+        log.info("knowledge_base_skipped_db_not_ready")
 
     log.info("app_ready")
     yield

@@ -126,9 +126,9 @@ function SuccessView({ ticketId, onReset }) {
       </p>
 
       {/* Ticket ID */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-4 inline-block min-w-48">
-        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Your Ticket ID</p>
-        <p className="text-lg font-mono font-bold text-gray-900">{ticketId}</p>
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-4 mb-4 inline-block min-w-48">
+        <p className="text-xs text-blue-600 uppercase tracking-wide mb-1 font-semibold">Your Ticket ID</p>
+        <p className="text-xl font-mono font-bold text-blue-800 bg-blue-100 px-3 py-1 rounded">{ticketId}</p>
       </div>
 
       {/* Status indicator */}

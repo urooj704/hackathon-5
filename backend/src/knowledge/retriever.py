@@ -22,6 +22,18 @@ settings = get_settings()
 _openai_client: AsyncOpenAI | None = None
 
 
+def _looks_like_placeholder_key(value: str | None) -> bool:
+    if not value:
+        return True
+    v = value.strip().lower()
+    return (
+        "placeholder" in v
+        or v in {"", "none", "null"}
+        or v.startswith("sk-placeholder")
+        or v.endswith("-placeholder")
+    )
+
+
 def _get_openai_client() -> AsyncOpenAI:
     global _openai_client
     if _openai_client is None:
@@ -31,6 +43,8 @@ def _get_openai_client() -> AsyncOpenAI:
 
 async def embed_query(query: str) -> List[float]:
     """Embed a single query string."""
+    if _looks_like_placeholder_key(settings.openai_api_key):
+        raise RuntimeError("OpenAI API key not configured")
     client = _get_openai_client()
     response = await client.embeddings.create(
         model=settings.embedding_model,
@@ -58,7 +72,15 @@ async def search_docs(
     Returns:
         List of dicts: {section_title, content, score}
     """
-    query_embedding = await embed_query(query)
+    if _looks_like_placeholder_key(settings.openai_api_key):
+        log.info("docs_search_skipped_no_openai_key", query=query[:80])
+        return []
+
+    try:
+        query_embedding = await embed_query(query)
+    except Exception as exc:
+        log.warning("docs_search_failed_embedding", error=str(exc))
+        return []
 
     # pgvector cosine similarity: 1 - cosine_distance
     # sqlalchemy pgvector operator: <=> is cosine distance

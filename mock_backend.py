@@ -91,6 +91,14 @@ def get_ticket(ticket_id: str):
     return ticket
 
 
+@app.post("/channels/web-form/update-ticket/{ticket_id}")
+def update_ticket(ticket_id: str, ticket_data: dict):
+    if ticket_id not in tickets:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    tickets[ticket_id] = ticket_data
+    return {"status": "updated", "ticket_id": ticket_id}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

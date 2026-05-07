@@ -122,7 +122,7 @@ export default function SupportPage() {
           {/* Form */}
           <div className="dark-form">
             <SupportForm
-              apiEndpoint={process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/channels/web-form/submit'}
+              apiEndpoint={process.env.NEXT_PUBLIC_API_URL || 'https://huggingface.co/spaces/Ujjee/hackathon-5/channels/web-form/submit'}
               companyName="FlowForge"
             />
           </div>

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import time
 from datetime import datetime
 
@@ -27,6 +28,15 @@ import pytest
 import httpx
 
 BASE_URL = "http://localhost:8000"
+
+# These are true end-to-end tests that require a running API server.
+# They are skipped by default so `pytest` can pass in local/unit-test mode.
+if os.getenv("RUN_E2E") != "1":
+    pytest.skip(
+        "E2E suite requires `uvicorn src.app:app --port 8000` running. "
+        "Set RUN_E2E=1 to enable.",
+        allow_module_level=True,
+    )
 
 
 # ─── Fixtures ─────────────────────────────────────────────────────────────────

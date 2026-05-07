@@ -5,10 +5,11 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   async rewrites() {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://huggingface.co/spaces/Ujjee/hackathon-5';
     return [
       {
         source: '/api/backend/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/:path*`,
+        destination: `${apiBase}/:path*`,
       },
     ];
   },

@@ -10,17 +10,27 @@ class Settings(BaseSettings):
     )
 
     # Database
-    database_url: str
-    database_url_sync: str
+    # Default to local dev DB to allow running without secrets.
+    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/fte_db"
+    database_url_sync: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/fte_db"
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"
 
     # Anthropic
-    anthropic_api_key: str
+    anthropic_api_key: str = ""
+
+    # Gemini
+    gemini_api_key: str = ""
+
+    # Groq
+    groq_api_key: str = ""
+
+    # LLM Provider: anthropic | gemini | groq
+    llm_provider: str = "gemini"
 
     # OpenAI (embeddings)
-    openai_api_key: str
+    openai_api_key: str = ""
 
     # Gmail
     gmail_client_id: str = ""
@@ -42,6 +52,8 @@ class Settings(BaseSettings):
 
     # Agent
     claude_model: str = "claude-sonnet-4-6"
+    gemini_model: str = "gemini-2.0-flash"
+    groq_model: str = "llama-3.3-70b-versatile"
     max_history_messages: int = 10
     max_history_tickets: int = 3
     embedding_model: str = "text-embedding-3-small"

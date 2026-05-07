@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user (required by HF Spaces)
+RUN useradd -m -u 1000 appuser
+
 WORKDIR /app
 
 # Install Python dependencies first (layer cache)
@@ -13,10 +16,14 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY --chown=appuser:appuser . .
+
+# Configurable port (default 8000, HF Spaces sets PORT=7860)
+ENV PORT=8000
+
+USER appuser
 
 EXPOSE 8000
 
 # Default: run the API server
-# Override CMD for worker: ["python", "workers/message_processor.py"]
-CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["sh", "-c", "uvicorn src.app:app --host 0.0.0.0 --port ${PORT}"]

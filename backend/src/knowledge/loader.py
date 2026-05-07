@@ -28,6 +28,18 @@ CHUNK_SIZE = 600     # max characters per chunk
 CHUNK_OVERLAP = 100  # overlap between adjacent chunks
 
 
+def _looks_like_placeholder_key(value: str | None) -> bool:
+    if not value:
+        return True
+    v = value.strip().lower()
+    return (
+        "placeholder" in v
+        or v in {"", "none", "null"}
+        or v.startswith("sk-placeholder")
+        or v.endswith("-placeholder")
+    )
+
+
 def _split_by_sections(text: str) -> List[Tuple[str, str]]:
     """
     Split markdown document into (section_title, content) pairs.
@@ -141,15 +153,18 @@ async def load_knowledge_base(db: AsyncSession, force_reload: bool = False) -> i
     log.info("chunks_prepared", count=len(all_chunks))
 
     # Embed all chunks (skip if OpenAI key is missing/placeholder)
-    openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
     texts_to_embed = [f"{title}\n\n{chunk}" for title, chunk, _ in all_chunks]
-
-    log.info("embedding_chunks", count=len(texts_to_embed))
-    try:
-        embeddings = await _embed_texts(openai_client, texts_to_embed)
-    except Exception as exc:
-        log.warning("embedding_failed_storing_without_vectors", error=str(exc))
+    if _looks_like_placeholder_key(settings.openai_api_key):
+        log.info("embedding_skipped_no_openai_key", count=len(texts_to_embed))
         embeddings = [None] * len(all_chunks)
+    else:
+        openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
+        log.info("embedding_chunks", count=len(texts_to_embed))
+        try:
+            embeddings = await _embed_texts(openai_client, texts_to_embed)
+        except Exception as exc:
+            log.warning("embedding_failed_storing_without_vectors", error=str(exc))
+            embeddings = [None] * len(all_chunks)
 
     # Upsert into DB
     for (title, chunk, chunk_idx), embedding in zip(all_chunks, embeddings):
