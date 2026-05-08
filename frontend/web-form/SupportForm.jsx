@@ -171,7 +171,7 @@ function SuccessView({ ticketId, onReset }) {
 // ─── Main Form Component ───────────────────────────────────────────────────
 
 export default function SupportForm({
-  apiEndpoint = '/channels/web-form/submit',
+  apiEndpoint = '/api/channels/web-form/submit',
   companyName = 'FlowForge',
   primaryColor = '#2563eb',
 }) {
