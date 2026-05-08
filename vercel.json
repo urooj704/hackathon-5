@@ -1,15 +1,10 @@
 {
   "version": 2,
+  "root": "frontend/web-form",
   "builds": [
     {
-      "src": "frontend/web-form/package.json",
+      "src": "package.json",
       "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
     }
   ]
 }
