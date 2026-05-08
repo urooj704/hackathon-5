@@ -3,10 +3,9 @@ title: FlowForge AI Support
 emoji: "🚀"
 colorFrom: blue
 colorTo: green
-sdk: python
+sdk: docker
 sdk_version: "0.0.0"
-python_version: "3.11"
-app_file: mock_backend.py
+app_file: Dockerfile
 pinned: false
 ---
 
