@@ -87,7 +87,7 @@ function SuccessView({ ticketId, onReset }) {
     const interval = setInterval(async () => {
       tries++;
       try {
-        const apiBase = window.__SUPPORT_API_ENDPOINT__ || '/channels/web-form';
+        const apiBase = window.__SUPPORT_API_ENDPOINT__ || '/api/channels/web-form';
         const res = await fetch(`${apiBase}/ticket/${ticketId}`);
         if (res.ok) {
           const data = await res.json();

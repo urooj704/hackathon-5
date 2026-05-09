@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ detail: 'Missing ticket ID' });
   }
 
-  // Get backend URL from environment or use localhost
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  // Get backend URL from environment or use HuggingFace backend
+  const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://ujjee-hackathon-5.hf.space';
   
   try {
     const response = await fetch(`${backendUrl}/channels/web-form/ticket/${id}`);

@@ -1,9 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/web-form/package.json",
-      "use": "@vercel/next"
-    }
-  ]
+  "buildCommand": "cd frontend/web-form && npm install && npm run build",
+  "outputDirectory": "frontend/web-form/.next",
+  "installCommand": "cd frontend/web-form && npm install",
+  "framework": "nextjs",
+  "env": {
+    "BACKEND_URL": "https://ujjee-hackathon-5.hf.space"
+  }
 }
