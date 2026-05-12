@@ -1,3 +1,5 @@
+import { getServerBackendUrl } from '../../../../../lib/serverBackendUrl';
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ detail: 'Method not allowed' });
@@ -9,8 +11,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ detail: 'Missing ticket ID' });
   }
 
-  // Get backend URL from environment or use HuggingFace backend
-  const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://ujjee-hackathon-5.hf.space';
+  const backendUrl = getServerBackendUrl();
   
   try {
     const response = await fetch(`${backendUrl}/channels/web-form/ticket/${id}`);

@@ -5,7 +5,7 @@ Runs without PostgreSQL / Redis — all data is in-memory.
 
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
@@ -43,9 +43,23 @@ class SubmitRequest(BaseModel):
 
 # ── Routes ──────────────────────────────────────────────────────────────────
 
+
+@app.get("/")
+def root():
+    return {
+        "service": "FlowForge Mock Backend",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
 @app.get("/health")
 def health():
-    return {"status": "healthy", "env": "mock", "timestamp": datetime.utcnow().isoformat()}
+    return {
+        "status": "healthy",
+        "env": "mock",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 @app.post("/channels/web-form/submit")
@@ -60,7 +74,7 @@ def submit_form(body: SubmitRequest):
         "category": body.category,
         "priority": body.priority,
         "message": body.message,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "messages": [
             {
                 "body": body.message,

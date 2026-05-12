@@ -68,16 +68,31 @@ def create_app() -> FastAPI:
         description="Multi-channel AI support agent for FlowForge",
         version="1.0.0",
         lifespan=lifespan,
-        docs_url="/docs" if not settings.is_production else None,
-        redoc_url="/redoc" if not settings.is_production else None,
+        docs_url="/docs" if settings.enable_api_docs else None,
+        redoc_url="/redoc" if settings.enable_api_docs else None,
     )
 
-    # CORS (restrict in production)
-    origins = ["*"] if not settings.is_production else ["https://flowforge.io"]
+    def _cors_origins() -> list[str]:
+        if not settings.is_production:
+            return ["*"]
+        origins = [
+            "https://flowforge.io",
+            "https://ujjee-hackathon-5.hf.space",
+        ]
+        extra = settings.cors_origins_extra.strip()
+        if extra:
+            for part in extra.split(","):
+                p = part.strip()
+                if p and p not in origins:
+                    origins.append(p)
+        return origins
+
+    origins = _cors_origins()
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
-        allow_methods=["GET", "POST"],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
 

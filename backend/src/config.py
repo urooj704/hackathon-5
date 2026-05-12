@@ -49,6 +49,10 @@ class Settings(BaseSettings):
     app_env: str = "development"
     secret_key: str = "change_me"
     log_level: str = "INFO"
+    # Comma-separated extra CORS origins (e.g. https://your-app.vercel.app)
+    cors_origins_extra: str = ""
+    # When true, OpenAPI /docs and /redoc are served even in production
+    enable_api_docs: bool = True
 
     # Agent
     claude_model: str = "claude-sonnet-4-6"
