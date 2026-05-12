@@ -31,8 +31,18 @@ docker run -p 7860:7860 -e PORT=7860 flowforge-space
 
 ## Vercel (frontend)
 
+### Required: Root Directory
+
+The Next.js app lives under **`frontend/web-form`**, not the repository root (there is no `package.json` at the repo root). In Vercel:
+
+**Settings → General → Root Directory** → set to **`frontend/web-form`** → Save → redeploy.
+
+If Root Directory is left as `.` (repository root), Vercel will not detect Next.js and you will see **`404: NOT_FOUND`** (or an empty deployment) when opening the site.
+
+### Steps
+
 1. Import the GitHub repo and set **Root Directory** to `frontend/web-form`.
-2. Framework: **Next.js** (auto-detected).
+2. Framework: **Next.js** (auto-detected; `vercel.json` in that folder sets `"framework": "nextjs"`).
 3. **Environment variables** (Production):
 
 | Name | Value |

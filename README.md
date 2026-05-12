@@ -59,6 +59,8 @@ uvicorn src.app:app --reload --port 8000
 
 See **[DEPLOYMENT.md](DEPLOYMENT.md)** for Hugging Face secrets, Vercel root directory (`frontend/web-form`), and environment variables.
 
+**Vercel:** you must set **Root Directory** to `frontend/web-form`. Otherwise the site shows **404 NOT_FOUND** because the repo root is not a Next.js project.
+
 ## Git remotes
 
 ```text
