@@ -31,18 +31,20 @@ docker run -p 7860:7860 -e PORT=7860 flowforge-space
 
 ## Vercel (frontend)
 
-### Required: Root Directory
+### Option A — Root Directory (recommended)
 
-The Next.js app lives under **`frontend/web-form`**, not the repository root (there is no `package.json` at the repo root). In Vercel:
+Set **Root Directory** to **`frontend/web-form`**. No extra root `package.json` is required for that layout.
 
-**Settings → General → Root Directory** → set to **`frontend/web-form`** → Save → redeploy.
+### Option B — Deploy from repository root (NOT_FOUND fix)
 
-If Root Directory is left as `.` (repository root), Vercel will not detect Next.js and you will see **`404: NOT_FOUND`** (or an empty deployment) when opening the site.
+If the project is connected with **Root Directory = `.`** (whole repo), this repo now includes a **root `package.json`** that runs `scripts/sync-frontend-to-root.js` before `next build`, copying `frontend/web-form` into the root so Vercel’s Next.js builder finds `pages/`, `next.config.js`, etc.
 
-### Steps
+Either **A** or **B** works. If you use **A**, Vercel only builds the subfolder and ignores the root `package.json` for that deployment.
+
+### Steps (Root Directory = `frontend/web-form`)
 
 1. Import the GitHub repo and set **Root Directory** to `frontend/web-form`.
-2. Framework: **Next.js** (auto-detected; `vercel.json` in that folder sets `"framework": "nextjs"`).
+2. Framework: **Next.js** (auto-detected; `frontend/web-form/vercel.json` sets `"framework": "nextjs"`).
 3. **Environment variables** (Production):
 
 | Name | Value |
@@ -51,6 +53,13 @@ If Root Directory is left as `.` (repository root), Vercel will not detect Next.
 | `BACKEND_URL` | Same as above (used by API routes server-side) |
 
 4. Deploy. Update `CORS_ORIGINS_EXTRA` on the backend (Hugging Face secrets) to include your Vercel URL, e.g. `https://your-project.vercel.app`, if you use the **full** backend with strict CORS. The mock backend allows all origins.
+
+### Steps (Root Directory = repository root — `.` or empty)
+
+1. Leave **Root Directory** blank or set to `.` (entire repository).
+2. Framework: **Next.js** (detected via root `package.json` + root `vercel.json`).
+3. **Build** runs `prebuild` → `scripts/sync-frontend-to-root.js` → `next build` at the repo root.
+4. Set the same **environment variables** as in the table above (root `vercel.json` also sets a default `BACKEND_URL` for the HF mock API).
 
 ## Git remotes
 
