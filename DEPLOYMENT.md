@@ -31,6 +31,14 @@ docker run -p 7860:7860 -e PORT=7860 flowforge-space
 
 ## Vercel (frontend)
 
+### Option C — Root Directory = `frontend` (your current error)
+
+If Vercel shows **`.next` not found at `.../frontend/.next`**, the project root is **`frontend`** while Next still builds in **`frontend/web-form`**.
+
+This repo now includes **`frontend/package.json`**, **`frontend/vercel.json`**, and **`frontend/sync-next-output.js`**: install + build run inside **`web-form`**, then **`.next` is copied to `frontend/.next`** so Vercel’s Next builder finds it.
+
+You can keep Root Directory as **`frontend`**, or switch to **A** or **B** if you prefer.
+
 ### Option A — Root Directory (recommended)
 
 Set **Root Directory** to **`frontend/web-form`**. No extra root `package.json` is required for that layout.
@@ -60,6 +68,13 @@ Either **A** or **B** works. If you use **A**, Vercel only builds the subfolder 
 2. Framework: **Next.js** (detected via root `package.json` + root `vercel.json`).
 3. **Build** runs `prebuild` → `scripts/sync-frontend-to-root.js` → `next build` at the repo root.
 4. Set the same **environment variables** as in the table above (root `vercel.json` also sets a default `BACKEND_URL` for the HF mock API).
+
+### Steps (Root Directory = `frontend`)
+
+1. Leave **Root Directory** as **`frontend`** (or set it to that if you want this layout).
+2. **Do not** set a custom **Output Directory** in Vercel (leave empty for Next.js).
+3. Deploy: `frontend/vercel.json` runs `npm ci` in `web-form`, builds there, then copies **`web-form/.next` → `frontend/.next`**.
+4. Use the same **environment variables** as in the table above (`frontend/vercel.json` includes a default `BACKEND_URL`).
 
 ## Git remotes
 

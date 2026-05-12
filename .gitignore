@@ -37,6 +37,9 @@ npm-debug.log*
 /postcss.config.js
 /tailwind.config.js
 
+# When Vercel Root Directory is `frontend`, .next is copied here (see frontend/sync-next-output.js)
+frontend/.next/
+
 # DB / secrets
 *.db
 gmail_token.json
