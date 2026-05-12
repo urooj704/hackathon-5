@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
-  "installCommand": "cd web-form && npm ci && cd .. && npm install",
-  "buildCommand": "cd web-form && npm run build && node ../sync-next-output.js",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
   "env": {
     "BACKEND_URL": "https://ujjee-hackathon-5.hf.space"
   }

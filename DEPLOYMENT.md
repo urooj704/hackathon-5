@@ -35,7 +35,7 @@ docker run -p 7860:7860 -e PORT=7860 flowforge-space
 
 If Vercel shows **`.next` not found at `.../frontend/.next`**, the project root is **`frontend`** while Next still builds in **`frontend/web-form`**.
 
-This repo now includes **`frontend/package.json`**, **`frontend/vercel.json`**, and **`frontend/sync-next-output.js`**: install + build run inside **`web-form`**, then **`.next` is copied to `frontend/.next`** so Vercel’s Next builder finds it.
+This repo now includes **`frontend/package.json`**, **`frontend/vercel.json`**, **`frontend/next.config.js`**, and **`frontend/sync-web-form-into-frontend.js`**: **`prebuild`** copies **`web-form/`** sources into **`frontend/`** (so **`frontend/pages/_app.jsx`** exists), then **`next build`** runs at the **`frontend`** root. This fixes **ENOENT** when Vercel’s tracer expected app files under **`frontend/pages/`**, not only under **`frontend/web-form/`**.
 
 You can keep Root Directory as **`frontend`**, or switch to **A** or **B** if you prefer.
 
@@ -73,7 +73,7 @@ Either **A** or **B** works. If you use **A**, Vercel only builds the subfolder 
 
 1. Leave **Root Directory** as **`frontend`** (or set it to that if you want this layout).
 2. **Do not** set a custom **Output Directory** in Vercel (leave empty for Next.js).
-3. Deploy: `frontend/vercel.json` runs `npm ci` in `web-form`, builds there, then copies **`web-form/.next` → `frontend/.next`**.
+3. Deploy: **`npm ci`** then **`npm run build`** (sync + `next build` at `frontend/`).
 4. Use the same **environment variables** as in the table above (`frontend/vercel.json` includes a default `BACKEND_URL`).
 
 ## Git remotes

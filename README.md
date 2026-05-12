@@ -59,7 +59,7 @@ uvicorn src.app:app --reload --port 8000
 
 See **[DEPLOYMENT.md](DEPLOYMENT.md)** for Hugging Face secrets and Vercel.
 
-**Vercel:** Use one of: **Root Directory** = `frontend/web-form` (simplest), **`.`** (repo root — uses `scripts/sync-frontend-to-root.js`), or **`frontend`** (builds `web-form` then copies `.next` to `frontend/.next` for Vercel). Leave **Output Directory** empty. Set `NEXT_PUBLIC_API_URL` + `BACKEND_URL` to your Hugging Face URL.
+**Vercel:** Use one of: **Root Directory** = `frontend/web-form` (simplest), **`.`** (repo root — `scripts/sync-frontend-to-root.js` + `next build`), or **`frontend`** (`sync-web-form-into-frontend.js` + `next build` at `frontend/`). Leave **Output Directory** empty. Set `NEXT_PUBLIC_API_URL` + `BACKEND_URL` to your Hugging Face URL.
 
 **Frontend ↔ backend:** Next.js API routes call your Hugging Face URL via `BACKEND_URL` / `NEXT_PUBLIC_API_URL` (see `frontend/web-form/lib/serverBackendUrl.js` and `vercel.json`).
 
