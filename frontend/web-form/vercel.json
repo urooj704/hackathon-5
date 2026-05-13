@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "env": {
-    "BACKEND_URL": "https://ujjee-hackathon-5.hf.space"
-  }
-}

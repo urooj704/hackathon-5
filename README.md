@@ -33,7 +33,7 @@ By default the Space runs the **in-memory mock API** (no Postgres). For the full
 | `hf_entrypoint.py` | Chooses mock vs full FastAPI |
 | `mock_backend.py` | Lightweight API for Spaces / demos |
 | `backend/` | Production FastAPI app, agents, migrations |
-| `frontend/web-form/` | Next.js UI for Vercel |
+| `frontend/web-form/` | Next.js UI for Netlify |
 
 ## Frontend (local)
 
@@ -57,11 +57,19 @@ uvicorn src.app:app --reload --port 8000
 
 ## Deploy
 
-See **[DEPLOYMENT.md](DEPLOYMENT.md)** for Hugging Face secrets and Vercel.
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for Hugging Face secrets and Netlify setup.
 
-**Vercel:** Use one of: **Root Directory** = `frontend/web-form` (simplest), **`.`** (repo root — `scripts/sync-frontend-to-root.js` + `next build`), or **`frontend`** (`sync-web-form-into-frontend.js` + `next build` at `frontend/`). Leave **Output Directory** empty. Set `NEXT_PUBLIC_API_URL` + `BACKEND_URL` to your Hugging Face URL.
+**Netlify Deployment (Premium Setup):**
+1. Connect your repository to **Netlify**.
+2. Netlify will automatically detect the `netlify.toml` configuration in the root directory.
+3. The build settings will be automatically applied (`Base directory` will be `frontend/web-form`).
+4. Navigate to **Site configuration > Environment variables**.
+5. Add the following environment variables:
+   - `NEXT_PUBLIC_API_URL` = `https://ujjee-hackathon-5.hf.space`
+   - `BACKEND_URL` = `https://ujjee-hackathon-5.hf.space`
+6. Click **Deploy Site**. Your Next.js app will build and deploy on Netlify's premium global edge network.
 
-**Frontend ↔ backend:** Next.js API routes call your Hugging Face URL via `BACKEND_URL` / `NEXT_PUBLIC_API_URL` (see `frontend/web-form/lib/serverBackendUrl.js` and `vercel.json`).
+**Frontend ↔ backend:** Next.js API routes securely proxy to your Hugging Face backend via `BACKEND_URL` / `NEXT_PUBLIC_API_URL` (see `frontend/web-form/lib/serverBackendUrl.js`).
 
 ## Git remotes
 

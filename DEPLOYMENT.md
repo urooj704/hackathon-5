@@ -29,52 +29,27 @@ docker build -t flowforge-space .
 docker run -p 7860:7860 -e PORT=7860 flowforge-space
 ```
 
-## Vercel (frontend)
+## Netlify (frontend)
 
-### Option C — Root Directory = `frontend` (your current error)
+This project has been optimized for a seamless deployment on Netlify using the included `netlify.toml` file.
 
-If Vercel shows **`.next` not found at `.../frontend/.next`**, the project root is **`frontend`** while Next still builds in **`frontend/web-form`**.
+### Deployment Steps (Premium Setup)
 
-This repo now includes **`frontend/package.json`**, **`frontend/vercel.json`**, **`frontend/next.config.js`**, and **`frontend/sync-web-form-into-frontend.js`**: **`prebuild`** copies **`web-form/`** sources into **`frontend/`** (so **`frontend/pages/_app.jsx`** exists), then **`next build`** runs at the **`frontend`** root. This fixes **ENOENT** when Vercel’s tracer expected app files under **`frontend/pages/`**, not only under **`frontend/web-form/`**.
-
-You can keep Root Directory as **`frontend`**, or switch to **A** or **B** if you prefer.
-
-### Option A — Root Directory (recommended)
-
-Set **Root Directory** to **`frontend/web-form`**. No extra root `package.json` is required for that layout.
-
-### Option B — Deploy from repository root (NOT_FOUND fix)
-
-If the project is connected with **Root Directory = `.`** (whole repo), this repo now includes a **root `package.json`** that runs `scripts/sync-frontend-to-root.js` before `next build`, copying `frontend/web-form` into the root so Vercel’s Next.js builder finds `pages/`, `next.config.js`, etc.
-
-Either **A** or **B** works. If you use **A**, Vercel only builds the subfolder and ignores the root `package.json` for that deployment.
-
-### Steps (Root Directory = `frontend/web-form`)
-
-1. Import the GitHub repo and set **Root Directory** to `frontend/web-form`.
-2. Framework: **Next.js** (auto-detected; `frontend/web-form/vercel.json` sets `"framework": "nextjs"`).
-3. **Environment variables** (Production):
+1. **Connect your repository**: Link your GitHub repository to Netlify.
+2. **Auto-Configuration**: Netlify will automatically detect the root `netlify.toml` file. This configures Netlify to use `frontend/web-form` as the Base directory and run the correct Next.js build command.
+3. **Set Environment Variables**: In the Netlify deployment settings (or later under Site configuration > Environment variables), add the following:
 
 | Name | Value |
 |------|--------|
-| `NEXT_PUBLIC_API_URL` | Your Hugging Face Space URL, e.g. `https://ujjee-hackathon-5.hf.space` |
-| `BACKEND_URL` | Same as above (used by API routes server-side) |
+| `NEXT_PUBLIC_API_URL` | `https://ujjee-hackathon-5.hf.space` |
+| `BACKEND_URL` | `https://ujjee-hackathon-5.hf.space` |
 
-4. Deploy. Update `CORS_ORIGINS_EXTRA` on the backend (Hugging Face secrets) to include your Vercel URL, e.g. `https://your-project.vercel.app`, if you use the **full** backend with strict CORS. The mock backend allows all origins.
+4. **Deploy**: Click **Deploy Site**. Netlify will build your application and deploy it across its Edge network.
+5. **CORS (Full Backend Only)**: If you use the full backend with strict CORS, update `CORS_ORIGINS_EXTRA` on the Hugging Face Space secrets to include your new Netlify URL (e.g. `https://your-project.netlify.app`). The default mock backend allows all origins.
 
-### Steps (Root Directory = repository root — `.` or empty)
+### Frontend ↔ Backend Communication
 
-1. Leave **Root Directory** blank or set to `.` (entire repository).
-2. Framework: **Next.js** (detected via root `package.json` + root `vercel.json`).
-3. **Build** runs `prebuild` → `scripts/sync-frontend-to-root.js` → `next build` at the repo root.
-4. Set the same **environment variables** as in the table above (root `vercel.json` also sets a default `BACKEND_URL` for the HF mock API).
-
-### Steps (Root Directory = `frontend`)
-
-1. Leave **Root Directory** as **`frontend`** (or set it to that if you want this layout).
-2. **Do not** set a custom **Output Directory** in Vercel (leave empty for Next.js).
-3. Deploy: **`npm ci`** then **`npm run build`** (sync + `next build` at `frontend/`).
-4. Use the same **environment variables** as in the table above (`frontend/vercel.json` includes a default `BACKEND_URL`).
+Next.js API routes securely proxy requests to your Hugging Face URL via `BACKEND_URL` or `NEXT_PUBLIC_API_URL`. This prevents CORS errors on the frontend since the browser only communicates with your Netlify domain.
 
 ## Git remotes
 

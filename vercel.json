@@ -1,8 +1,0 @@
-{
-  "framework": "nextjs",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "env": {
-    "BACKEND_URL": "https://ujjee-hackathon-5.hf.space"
-  }
-}
